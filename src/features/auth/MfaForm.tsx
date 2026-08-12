@@ -104,8 +104,6 @@ export function MfaForm() {
           {pending ? 'Verifying…' : 'Verify'}
         </Button>
 
-        {/* Guards send anonymous users to /login, so cancelling must reset the
-            state rather than navigate, or the redirect bounces back here. */}
         <Button type="button" variant="ghost" size="lg" onClick={logout}>
           Use a different account
         </Button>

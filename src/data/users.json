@@ -3,7 +3,7 @@
     "id": "usr_001",
     "name": "Ahd Min",
     "email": "admin@alkira.dev",
-    "password": "Alkira!2024",
+    "password": "Alkira!2026",
     "role": "read-write",
     "mfaCode": "123456"
   },
@@ -11,7 +11,7 @@
     "id": "usr_002",
     "name": "Reed Ohnly",
     "email": "viewer@alkira.dev",
-    "password": "Alkira!2024",
+    "password": "Alkira!2026",
     "role": "read-only",
     "mfaCode": "654321"
   }

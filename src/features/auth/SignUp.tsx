@@ -57,8 +57,11 @@ export function SignUp() {
         {submitted && (
           <Alert>
             <AlertDescription>
-              Looks good. Registration is out of scope for this exercise — sign
-              in with one of the demo accounts instead.
+              All set! Since this is a demo, this won't actually create an account, but you can go to the{' '}
+              <Link to="/login" className="text-foreground underline underline-offset-4">
+                login page
+              </Link>{' '}
+              and sign in with a demo account :)
             </AlertDescription>
           </Alert>
         )}
