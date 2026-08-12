@@ -29,7 +29,7 @@ State is handled with React Context and `useState`.
 Requires **Node 20.19+ or 22.12+** (Vite 8). Developed on Node 22.22.3.
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/YKawesome/alkira_ui_take_home_yousef_khan.git
 cd alkira_ui_take_home_yousef_khan
 npm install
 ```
