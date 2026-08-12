@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { expect, test } from 'vitest'
 import { LoginForm } from '@/features/auth/LoginForm'
+import { ADMIN } from '@/test/fixtures'
 import { renderWithAuth } from '@/test/render'
 
 function fill(label: string, value: string) {
@@ -25,7 +26,7 @@ test('a malformed email is rejected before any request', async () => {
   const auth = renderWithAuth(<LoginForm />)
 
   fill('Email', 'not-an-email')
-  fill('Password', 'Alkira!2024')
+  fill('Password', ADMIN.password)
   submit()
 
   expect(await screen.findByText('Enter a valid email address.')).toBeVisible()
@@ -35,12 +36,12 @@ test('a malformed email is rejected before any request', async () => {
 test('a valid submit passes the credentials through', async () => {
   const auth = renderWithAuth(<LoginForm />)
 
-  fill('Email', 'admin@alkira.dev')
-  fill('Password', 'Alkira!2024')
+  fill('Email', ADMIN.email)
+  fill('Password', ADMIN.password)
   submit()
 
   await waitFor(() =>
-    expect(auth.login).toHaveBeenCalledWith('admin@alkira.dev', 'Alkira!2024'),
+    expect(auth.login).toHaveBeenCalledWith(ADMIN.email, ADMIN.password),
   )
 })
 

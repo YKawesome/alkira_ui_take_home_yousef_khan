@@ -1,31 +1,35 @@
 import { expect, test } from 'vitest'
-import { AuthError, login, verifyMfa } from './authService'
+import { AuthError, login, verifyMfa } from '@/services/authService'
+import { ADMIN, VIEWER, publicUser, wrongCode } from '@/test/fixtures'
 
 test('happy path returns the user without secrets', async () => {
-  const challenge = await login('ADMIN@alkira.dev ', 'Alkira!2024')
-  const user = await verifyMfa(challenge.id, '123456')
-  expect(user).toEqual({
-    id: 'usr_001',
-    name: 'Ahd Min',
-    email: 'admin@alkira.dev',
-    role: 'read-write',
-  })
+  const challenge = await login(
+    ` ${ADMIN.email.toUpperCase()} `,
+    ADMIN.password,
+  )
+  const user = await verifyMfa(challenge.id, ADMIN.mfaCode)
+
+  expect(user).toEqual(publicUser(ADMIN))
   expect(Object.keys(user)).not.toContain('password')
 })
 
 test('bad password is indistinguishable from unknown email', async () => {
-  const a = await login('admin@alkira.dev', 'wrong').catch((e) => e)
+  const a = await login(ADMIN.email, 'wrong').catch((e) => e)
   const b = await login('nobody@alkira.dev', 'wrong').catch((e) => e)
+
   expect(a.code).toBe('invalid-credentials')
   expect(a.message).toBe(b.message)
 })
 
 test('challenge is consumed after three bad codes', async () => {
-  const challenge = await login('viewer@alkira.dev', 'Alkira!2024')
+  const challenge = await login(VIEWER.email, VIEWER.password)
+  const bad = wrongCode(VIEWER.mfaCode)
+
   const errs: AuthError[] = []
-  for (const code of ['000000', '111111', '222222', '654321']) {
+  for (const code of [bad, bad, bad, VIEWER.mfaCode]) {
     errs.push(await verifyMfa(challenge.id, code).catch((e) => e))
   }
+
   expect(errs.map((e) => e.code)).toEqual([
     'invalid-code',
     'invalid-code',
@@ -37,8 +41,10 @@ test('challenge is consumed after three bad codes', async () => {
 })
 
 test('a challenge cannot be replayed', async () => {
-  const challenge = await login('viewer@alkira.dev', 'Alkira!2024')
-  await verifyMfa(challenge.id, '654321')
-  const err = await verifyMfa(challenge.id, '654321').catch((e) => e)
+  const challenge = await login(VIEWER.email, VIEWER.password)
+  await verifyMfa(challenge.id, VIEWER.mfaCode)
+
+  const err = await verifyMfa(challenge.id, VIEWER.mfaCode).catch((e) => e)
+
   expect(err.code).toBe('unknown-challenge')
 })

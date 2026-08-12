@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { expect, test } from 'vitest'
 import App from '@/App'
 import { AuthProvider } from '@/context/AuthContext'
+import { ADMIN, ENABLED_SEGMENT, VIEWER, wrongCode } from '@/test/fixtures'
 
 function renderApp() {
   render(
@@ -28,43 +29,42 @@ function enterCode(code: string) {
   })
 }
 
+const disableAction = `Disable ${ENABLED_SEGMENT.name}`
+const enableAction = `Enable ${ENABLED_SEGMENT.name}`
+
 test('read/write user: login → mfa → dashboard with live actions', async () => {
   renderApp()
 
-  signIn('admin@alkira.dev', 'Alkira!2024')
+  signIn(ADMIN.email, ADMIN.password)
   expect(
     await screen.findByRole('heading', { name: 'Two-factor authentication' }),
   ).toBeVisible()
 
-  enterCode('123456')
+  enterCode(ADMIN.mfaCode)
   expect(await screen.findByRole('heading', { name: 'Dashboard' })).toBeVisible()
 
-  const action = screen.getByRole('button', { name: 'Disable prod-payments' })
+  const action = screen.getByRole('button', { name: disableAction })
   expect(action).toBeEnabled()
   fireEvent.click(action)
-  expect(
-    screen.getByRole('button', { name: 'Enable prod-payments' }),
-  ).toBeVisible()
+  expect(screen.getByRole('button', { name: enableAction })).toBeVisible()
 })
 
 test('read-only user reaches the same screen with actions disabled', async () => {
   renderApp()
 
-  signIn('viewer@alkira.dev', 'Alkira!2024')
+  signIn(VIEWER.email, VIEWER.password)
   await screen.findByRole('heading', { name: 'Two-factor authentication' })
 
-  enterCode('654321')
+  enterCode(VIEWER.mfaCode)
   expect(await screen.findByRole('heading', { name: 'Dashboard' })).toBeVisible()
 
-  expect(
-    screen.getByRole('button', { name: 'Disable prod-payments' }),
-  ).toBeDisabled()
+  expect(screen.getByRole('button', { name: disableAction })).toBeDisabled()
 })
 
 test('bad credentials never leave the login screen', async () => {
   renderApp()
 
-  signIn('admin@alkira.dev', 'wrong-password')
+  signIn(ADMIN.email, 'wrong-password')
 
   expect(await screen.findByRole('alert')).toHaveTextContent(
     'Incorrect email or password.',
@@ -75,10 +75,10 @@ test('bad credentials never leave the login screen', async () => {
 test('a wrong code holds the user at the mfa step', async () => {
   renderApp()
 
-  signIn('admin@alkira.dev', 'Alkira!2024')
+  signIn(ADMIN.email, ADMIN.password)
   await screen.findByRole('heading', { name: 'Two-factor authentication' })
 
-  enterCode('000000')
+  enterCode(wrongCode(ADMIN.mfaCode))
 
   expect(await screen.findByText(/2 attempts remaining/)).toBeVisible()
   expect(
@@ -89,9 +89,9 @@ test('a wrong code holds the user at the mfa step', async () => {
 test('signing out returns to login and forgets the session', async () => {
   renderApp()
 
-  signIn('admin@alkira.dev', 'Alkira!2024')
+  signIn(ADMIN.email, ADMIN.password)
   await screen.findByRole('heading', { name: 'Two-factor authentication' })
-  enterCode('123456')
+  enterCode(ADMIN.mfaCode)
   await screen.findByRole('heading', { name: 'Dashboard' })
 
   fireEvent.click(screen.getByRole('button', { name: 'Sign out' }))

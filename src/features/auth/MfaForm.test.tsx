@@ -31,9 +31,11 @@ test('a short code is rejected without spending an attempt', async () => {
 test('six digits submit without waiting for a click', async () => {
   const auth = renderWithAuth(<MfaForm />, { state: AWAITING })
 
-  enter('123456')
+  enter(CHALLENGE.devCode)
 
-  await waitFor(() => expect(auth.verifyMfa).toHaveBeenCalledWith('123456'))
+  await waitFor(() =>
+    expect(auth.verifyMfa).toHaveBeenCalledWith(CHALLENGE.devCode),
+  )
 })
 
 test('a rejected code is surfaced with the attempts left', () => {
