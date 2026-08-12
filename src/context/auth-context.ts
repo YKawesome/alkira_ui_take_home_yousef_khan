@@ -6,6 +6,8 @@ export type AuthState =
   | { status: 'awaiting-mfa'; challenge: MfaChallenge }
   | { status: 'authenticated'; user: User }
 
+export type AuthStatus = AuthState['status']
+
 export type AuthContextValue = {
   state: AuthState
   pending: boolean
