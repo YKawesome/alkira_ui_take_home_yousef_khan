@@ -58,7 +58,7 @@ test('a valid code authenticates and persists the session', async () => {
     status: 'authenticated',
     user: {
       id: 'usr_001',
-      name: 'Riley Chen',
+      name: 'Ahd Min',
       email: 'admin@alkira.dev',
       role: 'read-write',
     },

@@ -6,7 +6,7 @@ test('happy path returns the user without secrets', async () => {
   const user = await verifyMfa(challenge.id, '123456')
   expect(user).toEqual({
     id: 'usr_001',
-    name: 'Riley Chen',
+    name: 'Ahd Min',
     email: 'admin@alkira.dev',
     role: 'read-write',
   })

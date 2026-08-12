@@ -1,7 +1,7 @@
 [
   {
     "id": "usr_001",
-    "name": "Riley Chen",
+    "name": "Ahd Min",
     "email": "admin@alkira.dev",
     "password": "Alkira!2024",
     "role": "read-write",
@@ -9,7 +9,7 @@
   },
   {
     "id": "usr_002",
-    "name": "Sam Patel",
+    "name": "Reed Ohnly",
     "email": "viewer@alkira.dev",
     "password": "Alkira!2024",
     "role": "read-only",

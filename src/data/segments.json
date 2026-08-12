@@ -1,0 +1,26 @@
+[
+  {
+    "id": "seg_prod",
+    "name": "prod-payments",
+    "region": "us-west-2",
+    "enabled": true
+  },
+  {
+    "id": "seg_staging",
+    "name": "staging-core",
+    "region": "us-east-1",
+    "enabled": true
+  },
+  {
+    "id": "seg_analytics",
+    "name": "analytics-batch",
+    "region": "eu-central-1",
+    "enabled": false
+  },
+  {
+    "id": "seg_edge",
+    "name": "edge-partners",
+    "region": "ap-southeast-2",
+    "enabled": false
+  }
+]
