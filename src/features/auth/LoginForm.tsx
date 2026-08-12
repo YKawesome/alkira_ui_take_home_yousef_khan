@@ -1,43 +1,90 @@
-import { useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import { z } from 'zod'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { AuthLayout } from '@/features/auth/AuthLayout'
 import { useAuth } from '@/hooks/useAuth'
+
+const schema = z.object({
+  email: z.email('Enter a valid email address.'),
+  password: z.string().min(1, 'Password is required.'),
+})
+
+type LoginValues = z.infer<typeof schema>
 
 export function LoginForm() {
   const { login, pending, error } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { email: '', password: '' },
+  })
 
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault()
-        void login(email, password)
-      }}
-    >
-      <h1>Sign in</h1>
-      {error && <p role="alert">{error}</p>}
+    <AuthLayout title="Sign in" description="Use your Alkira account to continue.">
+      <form
+        noValidate
+        className="grid gap-4"
+        onSubmit={handleSubmit(({ email, password }) => login(email, password))}
+      >
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      <label htmlFor="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        value={email}
-        onChange={(event) => setEmail(event.target.value)}
-      />
+        <div className="grid gap-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email && 'email-error'}
+            {...register('email')}
+          />
+          {errors.email && (
+            <p id="email-error" className="text-sm text-destructive">
+              {errors.email.message}
+            </p>
+          )}
+        </div>
 
-      <label htmlFor="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-      />
+        <div className="grid gap-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            aria-invalid={Boolean(errors.password)}
+            aria-describedby={errors.password && 'password-error'}
+            {...register('password')}
+          />
+          {errors.password && (
+            <p id="password-error" className="text-sm text-destructive">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
 
-      <button type="submit" disabled={pending}>
-        {pending ? 'Signing in…' : 'Sign in'}
-      </button>
+        <Button type="submit" size="lg" disabled={pending}>
+          {pending ? 'Signing in…' : 'Sign in'}
+        </Button>
 
-      <Link to="/signup">Create an account</Link>
-    </form>
+        <p className="text-center text-sm text-muted-foreground">
+          Don't have an account?{' '}
+          <Link to="/signup" className="text-foreground underline underline-offset-4">
+            Sign up
+          </Link>
+        </p>
+      </form>
+    </AuthLayout>
   )
 }
