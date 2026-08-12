@@ -171,3 +171,7 @@ These are consequences of having no backend.
 2. MFA codes are static per user.
 3. Access control is only presentational, since there is no server-side validation.
 4. Dashboard edits are not persisted since data has nowhere to go.
+
+## Demo
+
+https://github.com/user-attachments/assets/a5c42086-34d7-4624-bba6-fa7970063880
